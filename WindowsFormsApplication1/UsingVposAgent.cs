@@ -86,7 +86,7 @@ namespace WindowsFormsApplication1
             
 
         }
-   
+
         public void CatVirtualFormcs_Shown(Dictionary<string, string> inputData)
         {
             this.outputData = new Dictionary<string, string>();
@@ -189,8 +189,15 @@ namespace WindowsFormsApplication1
                 idno = encoding.GetBytes(string.Empty.PadLeft(33, ' '));
 
             // [3]미사용
-            byte[] amt_flag = encoding.GetBytes(string.Empty.PadLeft(3, ' '));
-
+            byte[] amt_flag =  null;
+            if (!string.IsNullOrEmpty(inputData["AMT_FLAG"]) )
+            {
+                amt_flag = encoding.GetBytes(inputData["AMT_FLAG"].PadRight(3, ' '));
+            }
+            else
+            {
+                amt_flag = encoding.GetBytes(string.Empty.PadLeft(3, ' '));
+            }
             // [9]세금
             byte[] tax_amt = null;
             lvalue = 0;
@@ -423,7 +430,7 @@ namespace WindowsFormsApplication1
             catch (Exception ex)
             {
                 outputData.Add("ERRCODE", "9998" );		// 응답코드
-                outputData.Add("ResultMessage", string.Format("승인 실패 : {0}", ex.Message));
+                outputData.Add("ResultMessage", string.Format("Exception : {0}", ex.Message));
                 
                 return;
             }

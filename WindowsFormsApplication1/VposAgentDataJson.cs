@@ -40,6 +40,7 @@ namespace WindowsFormsApplication1
             public string ORI_DATE { get; set; }
             public string ORI_AUTHNO { get; set; }
             public string IDNO { get; set; }
+            public string AMT_FLAG { get; set; }
             public string TAX_AMT { get; set; }
             public string SVC_AMT { get; set; }
             public string NONTAX_AMT { get; set; }

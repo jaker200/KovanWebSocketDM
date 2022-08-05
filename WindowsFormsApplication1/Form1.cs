@@ -13,6 +13,8 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 
@@ -253,17 +255,18 @@ namespace WindowsFormsApplication1
                                     reqmsgPOS.body.ORI_DATE = text.Substring(53, 6);
                                     reqmsgPOS.body.ORI_AUTHNO = text.Substring(59, 12);
                                     reqmsgPOS.body.IDNO = text.Substring(71, 33);
-                                    reqmsgPOS.body.TAX_AMT = text.Substring(104, 9);
-                                    reqmsgPOS.body.SVC_AMT = text.Substring(113, 9);
-                                    reqmsgPOS.body.NONTAX_AMT = text.Substring(122, 9);
-                                    reqmsgPOS.body.FILLER = text.Substring(131, 100);
-                                    //reqmsgPOS.body.PG_FLAG = text.Substring(231, 2);
+                                    reqmsgPOS.body.AMT_FLAG = text.Substring(104, 3);
+                                    reqmsgPOS.body.TAX_AMT = text.Substring(107, 9);
+                                    reqmsgPOS.body.SVC_AMT = text.Substring(116, 9);
+                                    reqmsgPOS.body.NONTAX_AMT = text.Substring(125, 9);
+                                    reqmsgPOS.body.FILLER = text.Substring(134, 100);
+                                    //reqmsgPOS.body.PG_FLAG = text.Substring(234, 2);
                                     //reqmsgPOS.body.PG_LEN = text.Substring(233, 3);
                                     //reqmsgPOS.body.PG_DATA = text.Substring(236, 500);
                                     if (reqmsgPOS.header.TCODE.ToString() == "Q0" || reqmsgPOS.header.TCODE.ToString() == "Q1")
                                     {
-                                        reqmsgPOS.body.SET_QR_DATA_512 = text.Substring(231, 512);
-                                        reqmsgPOS.body.SET_QR_DATA_256 = text.Substring(743, 256);
+                                        reqmsgPOS.body.SET_QR_DATA_512 = text.Substring(234, 512);
+                                        reqmsgPOS.body.SET_QR_DATA_256 = text.Substring(746, 256);
                                     }
                                     else
                                     {
@@ -271,13 +274,111 @@ namespace WindowsFormsApplication1
                                         reqmsgPOS.body.SET_QR_DATA_256 = string.Empty.PadRight(256, ' ');
                                     }
                                 }
-                                else
+                                else if (reqmsgPOS.header.DATA_TYPE == "JSON      ")
                                 {
                                     // json 으로 변환
-                                    //text = text.Replace(@"\", "");
-                                    //var sendText = JsonConvert.DesserializeObject<VposAgentDataJson.ReqPacketBody>(text);
+                                    text = text.Replace(@"\", "");
+                                    string jsontext = text.Substring(32, text.Length - 32);
+                                    //var sendText = JsonConvert.DeserializeObject<MsgStructUsePOS.ReqPacketBody>(jsontext);
+                                    reqmsgPOS.body = JsonConvert.DeserializeObject<MsgStructUsePOS.ReqPacketBody>(jsontext);
+
+                                    if (reqmsgPOS.header.TCODE.ToString() == "Q0" || reqmsgPOS.header.TCODE.ToString() == "Q1")
+                                    {
+                                        reqmsgPOS.body.SET_QR_DATA_512 = text.Substring(234, 512);
+                                        reqmsgPOS.body.SET_QR_DATA_256 = text.Substring(746, 256);
+                                    }
+                                    else
+                                    {
+                                        reqmsgPOS.body.SET_QR_DATA_512 = string.Empty.PadRight(512, ' ');
+                                        reqmsgPOS.body.SET_QR_DATA_256 = string.Empty.PadRight(256, ' ');
+                                    }
+
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.TID))
+                                    {
+                                        reqmsgPOS.body.TID = string.Empty.PadRight(10, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.HALBU))
+                                    {
+                                        reqmsgPOS.body.HALBU = string.Empty.PadRight(2, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.TAMT))
+                                    {
+                                        reqmsgPOS.body.TAMT = string.Empty.PadRight(9, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.TAX_AMT))
+                                    {
+                                        reqmsgPOS.body.TAX_AMT = string.Empty.PadRight(9, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.SVC_AMT))
+                                    {
+                                        reqmsgPOS.body.SVC_AMT = string.Empty.PadRight(9, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.NONTAX_AMT))
+                                    {
+                                        reqmsgPOS.body.NONTAX_AMT = string.Empty.PadRight(9, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.ORI_DATE))
+                                    {
+                                        reqmsgPOS.body.ORI_DATE = string.Empty.PadRight(6, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.ORI_AUTHNO))
+                                    {
+                                        reqmsgPOS.body.ORI_AUTHNO = string.Empty.PadRight(12, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.IDNO))
+                                    {
+                                        reqmsgPOS.body.IDNO = string.Empty.PadRight(33, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.AMT_FLAG))
+                                    {
+                                        reqmsgPOS.body.AMT_FLAG = string.Empty.PadRight(3, ' ');
+
+                                    }
+                                    if (string.IsNullOrEmpty(reqmsgPOS.body.FILLER))
+                                    {
+                                        reqmsgPOS.body.FILLER = string.Empty.PadRight(100, ' ');
+
+                                    }
 
                                 }
+                                else
+                                {
+                                    string resultMessage = "정의되지 않은 DATA_TYPE";
+                                    string resultErrcode = "9999";
+                                    totallen = 32 + resultErrcode.Length + resultMessage.Length;
+                                    //totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length + 32;
+
+                                    reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+
+                                    //resp_buf = reqmsgPOS.header.LENGTH.ToString() + reqmsgPOS.header.MSG_VERSION.ToString() + reqmsgPOS.header.TCODE.ToString() + reqmsgPOS.header.MSG_TRACE.ToString() + reqmsgPOS.header.TID.ToString() + reqmsgPOS.header.DATA_TYPE.ToString() + respMsgUsingDaemon["0"].ToString() + respMsgUsingDaemon["ResultMessage"].ToString();
+                                    resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                                reqmsgPOS.header.MSG_VERSION.ToString() +
+                                                reqmsgPOS.header.TCODE.ToString() +
+                                                reqmsgPOS.header.MSG_TRACE.ToString() +
+                                                reqmsgPOS.header.DATA_TYPE.ToString() +
+                                                resultErrcode.ToString() +
+                                                resultMessage.ToString();
+
+
+
+                                    Send_Message(stream, resp_buf);
+                                    Debug.WriteLine(resp_buf, "[SEND]=");
+                                    loggerBuffer = "[SEND]=" + resp_buf;
+                                    log.Log_Write(loggerBuffer);
+                                    continue;
+
+                                   
+                                }
+
 
                                 reqMsgUsingDaemon.Add("TCODE", reqmsgPOS.header.TCODE.ToString());              // [0][거래구분] : "S0" : 신용승인, "S1" : 신용취소, "41" : 현금영수증승인, "42" : 현금영수증취소, "E0" : 은련승인, "E1" : 은련취소, 
                                 //                 "P0" : 앱카드승인, "P1" : 앱카드취소, "Z0" : 제로페이승인 "Z1" : 제로페이취소 "Q0" : 통합페이승인 "Q1" : 통합페이취소 
@@ -291,13 +392,14 @@ namespace WindowsFormsApplication1
                                 reqMsgUsingDaemon.Add("ORI_AUTHNO", reqmsgPOS.body.ORI_AUTHNO.ToString());      // [8][원승인번호] 승인취소시에만 사용
                                 reqMsgUsingDaemon.Add("MSG_TRACE", reqmsgPOS.header.MSG_TRACE.ToString());      // [9][거래일련번호]
                                 reqMsgUsingDaemon.Add("IDNO", reqmsgPOS.body.IDNO.ToString());                  // [10][IDNO]
-                                reqMsgUsingDaemon.Add("FILLER", reqmsgPOS.body.FILLER.ToString());              // [11][Filler]
-                                //reqMsgUsingDaemon.Add("PG_FLAG", reqmsgPOS.body.PG_FLAG.ToString());          // [12][PG_FLAG]
-                                //reqMsgUsingDaemon.Add("PG_LEN", reqmsgPOS.body.PG_LEN.ToString());            // [13][PG_LEN]
-                                //reqMsgUsingDaemon.Add("PG_DATA", reqmsgPOS.body.PG_DATA.ToString());          // [14][PG_DATA]
+                                reqMsgUsingDaemon.Add("AMT_FLAG", reqmsgPOS.body.AMT_FLAG.ToString());          // [11][VAN결제선택]
+                                reqMsgUsingDaemon.Add("FILLER", reqmsgPOS.body.FILLER.ToString());              // [12][Filler]
+                                //reqMsgUsingDaemon.Add("PG_FLAG", reqmsgPOS.body.PG_FLAG.ToString());          // [13][PG_FLAG]
+                                //reqMsgUsingDaemon.Add("PG_LEN", reqmsgPOS.body.PG_LEN.ToString());            // [14][PG_LEN]
+                                //reqMsgUsingDaemon.Add("PG_DATA", reqmsgPOS.body.PG_DATA.ToString());          // [15][PG_DATA]
 
-                                reqMsgUsingDaemon.Add("SET_QR_DATA_512", reqmsgPOS.body.SET_QR_DATA_512.ToString());// [11][QR_DATA_512]
-                                reqMsgUsingDaemon.Add("SET_QR_DATA_256", reqmsgPOS.body.SET_QR_DATA_256.ToString());// [12][QR_DATA_256]
+                                reqMsgUsingDaemon.Add("SET_QR_DATA_512", reqmsgPOS.body.SET_QR_DATA_512.ToString());// [13][QR_DATA_512]
+                                reqMsgUsingDaemon.Add("SET_QR_DATA_256", reqmsgPOS.body.SET_QR_DATA_256.ToString());// [14][QR_DATA_256]
 
                                 UsingVposAgent agent = new UsingVposAgent();
 
@@ -310,78 +412,147 @@ namespace WindowsFormsApplication1
 
                                 if (respMsgUsingDaemon["ERRCODE"].ToString().Equals("0000") || respMsgUsingDaemon["ERRCODE"].ToString().Equals("8999"))
                                 {
-                                    totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["TRANTYPE"].Length + respMsgUsingDaemon["CARDNO"].Length + respMsgUsingDaemon["HALBU"].Length + respMsgUsingDaemon["TAMT"].Length + respMsgUsingDaemon["TRANDATE"].Length + respMsgUsingDaemon["TRANTIME"].Length + respMsgUsingDaemon["AUTHNO"].Length + respMsgUsingDaemon["MERNO"].Length + respMsgUsingDaemon["TRANSERIAL"].Length + respMsgUsingDaemon["ISSUECARD"].Length + respMsgUsingDaemon["PURCHASECARD"].Length +
-                                        respMsgUsingDaemon["SIGNPATH"].Length + respMsgUsingDaemon["MSG1"].Length + respMsgUsingDaemon["MSG2"].Length + respMsgUsingDaemon["MSG3"].Length + respMsgUsingDaemon["MSG4"].Length + respMsgUsingDaemon["FILLER"].Length + respMsgUsingDaemon["QR_DATA_512"].Length + respMsgUsingDaemon["QR_DATA_256"].Length + 32;
+                                    if (reqmsgPOS.header.DATA_TYPE == "JSON      ")
+                                    {
+                                        string imsi_Json_buf =
+                                                 "{" +
+                                                 "'ERRCODE':'" + respMsgUsingDaemon["ERRCODE"].ToString() + "'," +
+                                                 "'TRANTYPE':'" + respMsgUsingDaemon["TRANTYPE"].ToString() + "'," +
+                                                 "'CARDNO':'" + respMsgUsingDaemon["CARDNO"].ToString() + "'," +
+                                                 "'HALBU':'" + respMsgUsingDaemon["HALBU"].ToString() + "'," +
+                                                 "'TAMT':'" + respMsgUsingDaemon["TAMT"].ToString() + "'," +
+                                                 "'TRANDATE':'" + respMsgUsingDaemon["TRANDATE"].ToString() + "'," +
+                                                 "'TRANTIME':'" + respMsgUsingDaemon["TRANTIME"].ToString() + "'," +
+                                                 "'AUTHNO':'" + respMsgUsingDaemon["AUTHNO"].ToString() + "'," +
+                                                 "'MERNO':'" + respMsgUsingDaemon["MERNO"].ToString() + "'," +
+                                                 "'TRANSERIAL':'" + respMsgUsingDaemon["TRANSERIAL"].ToString() + "'," +
+                                                 "'ISSUECARD':'" + respMsgUsingDaemon["ISSUECARD"].ToString() + "'," +
+                                                 "'PURCHASECARD':'" + respMsgUsingDaemon["PURCHASECARD"].ToString() + "'," +
+                                                 "'SIGNPATH':'" + respMsgUsingDaemon["SIGNPATH"].ToString() + "'," +
+                                                 "'MSG1':'" + respMsgUsingDaemon["MSG1"].ToString() + "'," +
+                                                 "'MSG2':'" + respMsgUsingDaemon["MSG2"].ToString() + "'," +
+                                                 "'MSG3':'" + respMsgUsingDaemon["MSG3"].ToString() + "'," +
+                                                 "'MSG4':'" + respMsgUsingDaemon["MSG4"].ToString() + "'," +
+                                                 "'FILLER':'" + respMsgUsingDaemon["FILLER"].ToString() + "'," +
+                                                 "'QR_DATA_512':'" + respMsgUsingDaemon["QR_DATA_512"].ToString() + "'," +
+                                                 "'QR_DATA_256':'" + respMsgUsingDaemon["QR_DATA_256"].ToString() + "'}";
 
-                                    reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
-
-                                    //resp_buf = reqmsgPOS.header.LENGTH.ToString() + reqmsgPOS.header.MSG_VERSION.ToString() + reqmsgPOS.header.TCODE.ToString() + reqmsgPOS.header.MSG_TRACE.ToString() + reqmsgPOS.header.DATA_TYPE.ToString();
-
-                                    resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                        totallen = imsi_Json_buf.Length + 32;
+                                        reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+                                        resp_buf = reqmsgPOS.header.LENGTH.ToString() +
                                                 reqmsgPOS.header.MSG_VERSION.ToString() +
                                                 reqmsgPOS.header.TCODE.ToString() +
                                                 reqmsgPOS.header.MSG_TRACE.ToString() +
-                                                reqmsgPOS.header.DATA_TYPE.ToString() +
-                                                respMsgUsingDaemon["ERRCODE"].ToString() +
-                                                respMsgUsingDaemon["TRANTYPE"].ToString() +
-                                                respMsgUsingDaemon["CARDNO"].ToString() +
-                                                respMsgUsingDaemon["HALBU"].ToString() +
-                                                respMsgUsingDaemon["TAMT"].ToString() +
-                                                respMsgUsingDaemon["TRANDATE"].ToString() +
-                                                respMsgUsingDaemon["TRANTIME"].ToString() +
-                                                respMsgUsingDaemon["AUTHNO"].ToString() +
-                                                respMsgUsingDaemon["MERNO"].ToString() +
-                                                respMsgUsingDaemon["TRANSERIAL"].ToString() +
-                                                respMsgUsingDaemon["ISSUECARD"].ToString() +
-                                                respMsgUsingDaemon["PURCHASECARD"].ToString() +
-                                                respMsgUsingDaemon["SIGNPATH"].ToString() +
-                                                respMsgUsingDaemon["MSG1"].ToString() +
-                                                respMsgUsingDaemon["MSG2"].ToString() +
-                                                respMsgUsingDaemon["MSG3"].ToString() +
-                                                respMsgUsingDaemon["MSG4"].ToString() +
-                                                respMsgUsingDaemon["FILLER"].ToString() +
-                                                respMsgUsingDaemon["QR_DATA_512"].ToString() +
-                                                respMsgUsingDaemon["QR_DATA_256"].ToString();
+                                                reqmsgPOS.header.DATA_TYPE.ToString() + imsi_Json_buf;
 
-                                    //respMsgUsingDaemon["PGLEN"].ToString() + 
-                                    //respMsgUsingDaemon["PGDATA"].ToString();
 
+                                    }
+                                    else
+                                    {
+                                        totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["TRANTYPE"].Length + respMsgUsingDaemon["CARDNO"].Length + respMsgUsingDaemon["HALBU"].Length + respMsgUsingDaemon["TAMT"].Length + respMsgUsingDaemon["TRANDATE"].Length + respMsgUsingDaemon["TRANTIME"].Length + respMsgUsingDaemon["AUTHNO"].Length + respMsgUsingDaemon["MERNO"].Length + respMsgUsingDaemon["TRANSERIAL"].Length + respMsgUsingDaemon["ISSUECARD"].Length + respMsgUsingDaemon["PURCHASECARD"].Length +
+                                            respMsgUsingDaemon["SIGNPATH"].Length + respMsgUsingDaemon["MSG1"].Length + respMsgUsingDaemon["MSG2"].Length + respMsgUsingDaemon["MSG3"].Length + respMsgUsingDaemon["MSG4"].Length + respMsgUsingDaemon["FILLER"].Length + respMsgUsingDaemon["QR_DATA_512"].Length + respMsgUsingDaemon["QR_DATA_256"].Length + 32;
+
+                                        reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+
+                                        //resp_buf = reqmsgPOS.header.LENGTH.ToString() + reqmsgPOS.header.MSG_VERSION.ToString() + reqmsgPOS.header.TCODE.ToString() + reqmsgPOS.header.MSG_TRACE.ToString() + reqmsgPOS.header.DATA_TYPE.ToString();
+
+                                        resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                                    reqmsgPOS.header.MSG_VERSION.ToString() +
+                                                    reqmsgPOS.header.TCODE.ToString() +
+                                                    reqmsgPOS.header.MSG_TRACE.ToString() +
+                                                    reqmsgPOS.header.DATA_TYPE.ToString() +
+                                                    respMsgUsingDaemon["ERRCODE"].ToString() +
+                                                    respMsgUsingDaemon["TRANTYPE"].ToString() +
+                                                    respMsgUsingDaemon["CARDNO"].ToString() +
+                                                    respMsgUsingDaemon["HALBU"].ToString() +
+                                                    respMsgUsingDaemon["TAMT"].ToString() +
+                                                    respMsgUsingDaemon["TRANDATE"].ToString() +
+                                                    respMsgUsingDaemon["TRANTIME"].ToString() +
+                                                    respMsgUsingDaemon["AUTHNO"].ToString() +
+                                                    respMsgUsingDaemon["MERNO"].ToString() +
+                                                    respMsgUsingDaemon["TRANSERIAL"].ToString() +
+                                                    respMsgUsingDaemon["ISSUECARD"].ToString() +
+                                                    respMsgUsingDaemon["PURCHASECARD"].ToString() +
+                                                    respMsgUsingDaemon["SIGNPATH"].ToString() +
+                                                    respMsgUsingDaemon["MSG1"].ToString() +
+                                                    respMsgUsingDaemon["MSG2"].ToString() +
+                                                    respMsgUsingDaemon["MSG3"].ToString() +
+                                                    respMsgUsingDaemon["MSG4"].ToString() +
+                                                    respMsgUsingDaemon["FILLER"].ToString() +
+                                                    respMsgUsingDaemon["QR_DATA_512"].ToString() +
+                                                    respMsgUsingDaemon["QR_DATA_256"].ToString();
+
+
+                                    }
                                 }
                                 else
                                 {
-                                    totallen = 32 + respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length;
-                                    //totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length + 32;
-
-                                    reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
-
-                                    //resp_buf = reqmsgPOS.header.LENGTH.ToString() + reqmsgPOS.header.MSG_VERSION.ToString() + reqmsgPOS.header.TCODE.ToString() + reqmsgPOS.header.MSG_TRACE.ToString() + reqmsgPOS.header.TID.ToString() + reqmsgPOS.header.DATA_TYPE.ToString() + respMsgUsingDaemon["0"].ToString() + respMsgUsingDaemon["ResultMessage"].ToString();
-                                    resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                    if (reqmsgPOS.header.DATA_TYPE == "JSON      ")
+                                    {
+                                        string imsi_Json_buf = "{" +
+                                                                "'ERRCODE':'" + respMsgUsingDaemon["ERRCODE"].ToString() + "'," +
+                                                                "'ResultMessage':'" + respMsgUsingDaemon["ResultMessage"].ToString() + "'}";
+                                        totallen = imsi_Json_buf.Length + 32;
+                                        reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+                                        resp_buf = reqmsgPOS.header.LENGTH.ToString() +
                                                 reqmsgPOS.header.MSG_VERSION.ToString() +
                                                 reqmsgPOS.header.TCODE.ToString() +
                                                 reqmsgPOS.header.MSG_TRACE.ToString() +
-                                                reqmsgPOS.header.DATA_TYPE.ToString() +
-                                                respMsgUsingDaemon["ERRCODE"].ToString() +
-                                                respMsgUsingDaemon["ResultMessage"].ToString();
+                                                reqmsgPOS.header.DATA_TYPE.ToString() + imsi_Json_buf;
+                                    }
+                                    else
+                                    {
+                                        totallen = 32 + respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length;
+                                        //totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length + 32;
+
+                                        reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+
+                                        //resp_buf = reqmsgPOS.header.LENGTH.ToString() + reqmsgPOS.header.MSG_VERSION.ToString() + reqmsgPOS.header.TCODE.ToString() + reqmsgPOS.header.MSG_TRACE.ToString() + reqmsgPOS.header.TID.ToString() + reqmsgPOS.header.DATA_TYPE.ToString() + respMsgUsingDaemon["0"].ToString() + respMsgUsingDaemon["ResultMessage"].ToString();
+                                        resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                                    reqmsgPOS.header.MSG_VERSION.ToString() +
+                                                    reqmsgPOS.header.TCODE.ToString() +
+                                                    reqmsgPOS.header.MSG_TRACE.ToString() +
+                                                    reqmsgPOS.header.DATA_TYPE.ToString() +
+                                                    respMsgUsingDaemon["ERRCODE"].ToString() +
+                                                    respMsgUsingDaemon["ResultMessage"].ToString();
+
+                                    }
 
                                 }
+                                
                             }
                             catch (ArgumentOutOfRangeException)
                             {
                                 string resultMessage = "ArgumentOutOfRangeException";
                                 string resultErrcode = "9999";
-                                totallen = 32 + resultErrcode.Length + resultMessage.Length;
-                                //totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length + 32;
 
-                                reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
-
-                                //resp_buf = reqmsgPOS.header.LENGTH.ToString() + reqmsgPOS.header.MSG_VERSION.ToString() + reqmsgPOS.header.TCODE.ToString() + reqmsgPOS.header.MSG_TRACE.ToString() + reqmsgPOS.header.TID.ToString() + reqmsgPOS.header.DATA_TYPE.ToString() + respMsgUsingDaemon["0"].ToString() + respMsgUsingDaemon["ResultMessage"].ToString();
-                                resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                if (reqmsgPOS.header.DATA_TYPE == "JSON      ")
+                                {
+                                    string imsi_Json_buf = "{" +
+                                                            "'ERRCODE':'" + resultErrcode.ToString() + "'," +
+                                                            "'ResultMessage':'" + resultMessage.ToString() + "'}";
+                                    totallen = imsi_Json_buf.Length + 32;
+                                    reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+                                    resp_buf = reqmsgPOS.header.LENGTH.ToString() +
                                             reqmsgPOS.header.MSG_VERSION.ToString() +
                                             reqmsgPOS.header.TCODE.ToString() +
                                             reqmsgPOS.header.MSG_TRACE.ToString() +
-                                            reqmsgPOS.header.DATA_TYPE.ToString() +
-                                            resultErrcode.ToString() +
-                                            resultMessage.ToString();
+                                            reqmsgPOS.header.DATA_TYPE.ToString() + imsi_Json_buf;
+                                }
+                                else
+                                {
+                                    totallen = 32 + resultErrcode.Length + resultMessage.Length;
+                                    //totallen = respMsgUsingDaemon["ERRCODE"].Length + respMsgUsingDaemon["ResultMessage"].Length + 32;
+
+                                    reqmsgPOS.header.LENGTH = totallen.ToString().Trim().PadLeft(4, '0');
+                                    resp_buf = reqmsgPOS.header.LENGTH.ToString() +
+                                                reqmsgPOS.header.MSG_VERSION.ToString() +
+                                                reqmsgPOS.header.TCODE.ToString() +
+                                                reqmsgPOS.header.MSG_TRACE.ToString() +
+                                                reqmsgPOS.header.DATA_TYPE.ToString() +
+                                                resultErrcode.ToString() +
+                                                resultMessage.ToString();
+                                }
                             }
                             catch (NullReferenceException)
                             {

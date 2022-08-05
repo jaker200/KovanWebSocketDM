@@ -33,9 +33,9 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.setConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeIPPORTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,7 +45,6 @@
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "KovanWebSocketDM";
             this.notifyIcon1.Visible = true;
-            //this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
             // contextMenuStrip1
             // 
@@ -53,27 +52,21 @@
             this.exitToolStripMenuItem,
             this.setConfigToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
-            //this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(132, 48);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.Click_Exit);
-            // 
-            // backgroundWorker1
-            // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundworker_doWork);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // setConfigToolStripMenuItem
             // 
             this.setConfigToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeIPPORTToolStripMenuItem});
             this.setConfigToolStripMenuItem.Name = "setConfigToolStripMenuItem";
-            this.setConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.setConfigToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.setConfigToolStripMenuItem.Text = "Set Config";
             // 
             // changeIPPORTToolStripMenuItem
@@ -82,6 +75,11 @@
             this.changeIPPORTToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.changeIPPORTToolStripMenuItem.Text = "Change IP/PORT";
             this.changeIPPORTToolStripMenuItem.Click += new System.EventHandler(this.changeIPPORTToolStripMenuItem_Click);
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundworker_doWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // Form1
             // 

@@ -14,9 +14,28 @@ namespace WindowsFormsApplication1
         [STAThread]
         static void Main()
         {
+            if (IsAlreadyRunning())
+                return;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+        }
+
+        private static bool IsAlreadyRunning()
+        {
+            System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+            int id = currentProcess.Id;
+            string name = currentProcess.ProcessName;
+
+            System.Diagnostics.Process[] processes = System.Diagnostics.Process.GetProcesses();
+            foreach (System.Diagnostics.Process process in processes)
+            {
+                if (id != process.Id && name == process.ProcessName)
+                    return true;
+            }
+
+            return false;
         }
     }
 }
