@@ -44,29 +44,6 @@ namespace WindowsFormsApplication1
             log = new LoGGer();
         }
 
-        private void test_svc(){
-            if (server == null)
-            {
-                server = new TcpListener(IPAddress.Parse(DM_IP), DM_PORT);
-            }
-            else
-            {
-                this.Close();
-                if (Application.MessageLoop == true)
-                {
-                    Application.Exit();
-                }
-                else
-                {
-                    Environment.Exit(1);
-                }
-            }
-
-            server.Start();
-            this.backgroundWorker1.RunWorkerAsync();  
-
-        }
-
         private void Click_Exit(object sender, EventArgs e)
         {
             if (!isExit)
@@ -103,19 +80,22 @@ namespace WindowsFormsApplication1
             {
                 Debug.WriteLine("======= AcceptTcpClient NoNullAllowedException =============\n");
                 log.Log_Write("======= AcceptTcpClient NoNullAllowedException =============");
-                return;
+                e.Cancel = true;
+                //return;
             }
             catch (SocketException)
             {
                 Debug.WriteLine("======= AcceptTcpClient SocketException =============\n");
                 log.Log_Write("======= AcceptTcpClient SocketException =============");
-                return;
+                e.Cancel = true;
+                //return;
             }
             catch (Exception)
             {
                 Debug.WriteLine("======= AcceptTcpClient Exception =============\n");
                 log.Log_Write("======= AcceptTcpClient Exception =============");
-                return;
+                e.Cancel = true;
+                //return;
             }
             try
             {
@@ -126,6 +106,7 @@ namespace WindowsFormsApplication1
 
                     while (!stream.DataAvailable) ;
                     Debug.WriteLine("Client Send Data\n");
+                    log.Log_Write("Client Send Data\n");
 
                     while (client.Available < 3) ;
 
@@ -556,6 +537,8 @@ namespace WindowsFormsApplication1
                             }
                             catch (NullReferenceException)
                             {
+                                Debug.WriteLine(" While NullReferenceException");
+                                log.Log_Write(" While NullReferenceException");
 
                             }
 
@@ -571,16 +554,15 @@ namespace WindowsFormsApplication1
                         }
 
                     }
-                    Thread.Sleep(1);
+                    System.Threading.Thread.Sleep(10);
                 }
             }
             catch(Exception)
             {
-
+                Debug.WriteLine(" Exception" + e.ToString());
+                log.Log_Write(" Exception" + e.ToString());
 
             }
-
-
 
             Debug.WriteLine("End of While");
             log.Log_Write("End of While");
@@ -624,8 +606,7 @@ namespace WindowsFormsApplication1
             bool isSavedINIFile = checkINIfileData();
             if (!isSavedINIFile)
             {
-                //inifile.WriteINI(INI_DAEMON_NAME, INI_DAEMON_KEY_IP, "127.0.0.1");
-                //inifile.WriteINI(INI_DAEMON_NAME, INI_DAEMON_KEY_PORT, "8888");
+
                 DisplaySetting newform = new DisplaySetting();
                 if( newform.ShowDialog() == DialogResult.Cancel)
                 {
@@ -653,6 +634,7 @@ namespace WindowsFormsApplication1
                 {
                     server = new TcpListener(IPAddress.Parse(DM_IP), DM_PORT);
                     server.Start();
+
                     this.backgroundWorker1.RunWorkerAsync();
                 }
                 else
@@ -748,18 +730,56 @@ namespace WindowsFormsApplication1
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
 
-            Debug.WriteLine("RunWorkerCompleted Server Restart");
-            log.Log_Write("RunWorkerCompleted Server Restart");
-            if (server.Pending())
+            Debug.WriteLine("RunWorkerCompleted ");
+            log.Log_Write("RunWorkerCompleted");
+            if( e.Error != null)
             {
-                Debug.WriteLine("Server Pendgin!! ");
-                server.Stop();
-                server.Start();
-                Debug.WriteLine("Server Restart Done");
-                log.Log_Write("Server Restart ");
+                Debug.WriteLine("ERROR " + e.Error.Message);
+                log.Log_Write("ERROR " + e.Error.Message);
+                Application.Exit();
+            }
+            else if (e.Cancelled)
+            {
+                // Next, handle the case where the user canceled 
+                // the operation.
+                // Note that due to a race condition in 
+                // the DoWork event handler, the Cancelled
+                // flag may not have been set, even though
+                // CancelAsync was called.
+                Debug.WriteLine("RunWorkerCompleted user canceled");
+                log.Log_Write("RunWorkerCompleted user canceled ");
+                if (server.Pending())
+                {
+                    Debug.WriteLine("Server Pendgin!! ");
+                    server.Stop();
+                    server.Start();
+                    Debug.WriteLine("Server Restart Done");
+                    log.Log_Write("Server Restart ");
+                }
+
+                this.backgroundWorker1.RunWorkerAsync();
+
+            }
+            else
+            {
+                // Finally, handle the case where the operation 
+                // succeeded.
+                Debug.WriteLine("Succeeded");
+                log.Log_Write("Succeeded");
+
+                if (server.Pending())
+                {
+                    Debug.WriteLine("Server Pendgin!! ");
+                    server.Stop();
+                    server.Start();
+                    Debug.WriteLine("Server Restart Done");
+                    log.Log_Write("Server Restart ");
+                }
+
+                this.backgroundWorker1.RunWorkerAsync();
+
             }
 
-            this.backgroundWorker1.RunWorkerAsync();
         }
 
         private void changeIPPORTToolStripMenuItem_Click(object sender, EventArgs e)
