@@ -96,7 +96,7 @@ namespace WindowsFormsApplication1
             // 요청 전문 생성 
 
             // [2][거래구분]
-            byte[] tcode = null;
+            byte[] tcode = new byte[2];
             if( string.IsNullOrEmpty(inputData["TCODE"].Trim()) ){
                 outputData.Add("ERRCODE", "9999");		// 응답코드
                 outputData.Add("ResultMessage", "승인 실패 [미확인 거래구분]");
@@ -106,7 +106,7 @@ namespace WindowsFormsApplication1
             }
 
             // [10][단말기번호]
-            byte[] tid = null;
+            byte[] tid = new byte[2];
             if( string.IsNullOrEmpty(inputData["TID"].Trim()) ){
                 outputData.Add("ERRCODE", "9999");		// 응답코드
                 outputData.Add("ResultMessage", "승인 실패 [단말기번호 오류]");
@@ -116,7 +116,7 @@ namespace WindowsFormsApplication1
             }
 
             // [2]할부개월
-            byte[] halbu = null;
+            byte[] halbu = new byte[2];
             if (inputData["TCODE"] == "41" || inputData["TCODE"] == "42")
             {	// 현금 영수증
                 if ( !string.IsNullOrEmpty(inputData["HALBU"].Trim()) )
@@ -137,7 +137,7 @@ namespace WindowsFormsApplication1
             }
 
             // [9]승인금액
-            byte[] tamt = null;
+            byte[] tamt = new byte[9];
             lvalue = 0;
             if( !string.IsNullOrEmpty(inputData["TAMT"].Trim()) ){
                 lvalue = long.Parse(inputData["TAMT"]);
@@ -149,7 +149,7 @@ namespace WindowsFormsApplication1
             }
 
             // [6]원거래일자
-            byte[] ori_date = null;
+            byte[] ori_date = new byte[6];
             if (inputData["TCODE"] == "S0" || 
                 inputData["TCODE"] == "41" || 
                 inputData["TCODE"] == "P0" || 
@@ -161,7 +161,7 @@ namespace WindowsFormsApplication1
                 ori_date = encoding.GetBytes(inputData["ORI_DATE"].Trim().PadRight(6, ' '));
 
             // [12]원거래승인번호
-            byte[] ori_authno = null;
+            byte[] ori_authno = new byte[12];
             if (inputData["TCODE"] == "S0" || 
                 inputData["TCODE"] == "41" || 
                 inputData["TCODE"] == "P0" || 
@@ -173,14 +173,14 @@ namespace WindowsFormsApplication1
                 ori_authno = encoding.GetBytes(inputData["ORI_AUTHNO"].Trim().PadRight(12, ' '));
 
             // [12]거래일련번호
-            byte[] tran_serial = null;
-            if( string.IsNullOrEmpty(inputData["MSG_TRACE"]) )
+            byte[] tran_serial = new byte[12];
+            if ( string.IsNullOrEmpty(inputData["MSG_TRACE"]) )
                 tran_serial = encoding.GetBytes(DateTime.Now.ToString("HHmmss").PadRight(12, ' '));
             else
                 tran_serial = encoding.GetBytes(inputData["MSG_TRACE"].PadRight(12, ' '));
 
             // [33]IDNO
-            byte[] idno = null;
+            byte[] idno = new byte[33];
             if (!string.IsNullOrEmpty(inputData["IDNO"]) )
             {
                 idno = encoding.GetBytes(inputData["IDNO"].PadRight(33, ' '));
@@ -189,7 +189,7 @@ namespace WindowsFormsApplication1
                 idno = encoding.GetBytes(string.Empty.PadLeft(33, ' '));
 
             // [3]미사용
-            byte[] amt_flag =  null;
+            byte[] amt_flag = new byte[3];
             if (!string.IsNullOrEmpty(inputData["AMT_FLAG"]) )
             {
                 amt_flag = encoding.GetBytes(inputData["AMT_FLAG"].PadRight(3, ' '));
@@ -198,8 +198,9 @@ namespace WindowsFormsApplication1
             {
                 amt_flag = encoding.GetBytes(string.Empty.PadLeft(3, ' '));
             }
+
             // [9]세금
-            byte[] tax_amt = null;
+            byte[] tax_amt = new byte[9];
             lvalue = 0;
             if( !string.IsNullOrEmpty(inputData["TAX_AMT"].Trim()) ){
                 lvalue = long.Parse(inputData["TAX_AMT"]);
@@ -209,7 +210,7 @@ namespace WindowsFormsApplication1
             }
 
             // [9]봉사료
-            byte[] sfee_amt = null;
+            byte[] sfee_amt = new byte[9];
             lvalue = 0;
             if( !string.IsNullOrEmpty(inputData["SVC_AMT"].Trim()) ){
                 lvalue = long.Parse(inputData["SVC_AMT"]);
@@ -219,7 +220,7 @@ namespace WindowsFormsApplication1
             }
 
             // [9]비과세
-            byte[] free_amt = null;
+            byte[] free_amt = new byte[9];
             lvalue = 0;
             if( !string.IsNullOrEmpty(inputData["NONTAX_AMT"].Trim()) ){
                 lvalue = long.Parse(inputData["NONTAX_AMT"]);
@@ -229,7 +230,7 @@ namespace WindowsFormsApplication1
             }
 
             // [100]여유필드
-            byte[] filler = null;
+            byte[] filler = new byte[100];
             if (!string.IsNullOrEmpty(inputData["FILLER"]) )
             {
                 filler = encoding.GetBytes(inputData["FILLER"].PadRight(100, ' '));
